@@ -31,7 +31,6 @@ func start(URL string) {
 	vedioCards := doc.Find("ytd-rich-grid-row >  #contents > ytd-rich-item-renderer > #content > ytd-rich-grid-media > #dismissible")
 	//
 	vedioCards.Each(func(i int, card *goquery.Selection) {
-		fmt.Println(i)
 		// get the vedio image and the title and the channel name also the time it was published
 		cardImages := card.Find("img")
 		imageSrc, exists := cardImages.First().Attr("src")
