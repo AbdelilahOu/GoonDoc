@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/AbdelilahOu/GoonDoc/model"
@@ -36,19 +36,12 @@ func start(URL string) {
 	//
 	var videos = []model.YtVideo{}
 	//
-
 	vedioCards.Each(func(i int, card *goquery.Selection) {
 		// get the vedio image and the title and the channel name also the time it was published
 		thumbnailImg := card.Find("#thumbnail yt-image img")
-		imageSrc, exists := thumbnailImg.Attr("src")
-		if exists {
-			fmt.Println("image src :", imageSrc)
-		}
+		imageSrc, _ := thumbnailImg.Attr("src")
 		channel := card.Find("#details a #avatar img")
-		channelImg, exists := channel.Attr("src")
-		if exists {
-			fmt.Println("channel src :", channelImg)
-		}
+		channelImg, _ := channel.Attr("src")
 		title := card.Find("#details #meta h3 a yt-formatted-string").Text()
 		channelName := card.Find("#details #meta ytd-video-meta-block #metadata #byline-container ytd-channel-name a").Text()
 		views := card.Find("#details #meta ytd-video-meta-block #metadata span").First().Text()
@@ -74,9 +67,25 @@ func start(URL string) {
 }
 
 func saveDataToJson(data []model.YtVideo) {
-	file, _ := json.MarshalIndent(data, "", " ")
+	file, err := os.Create("output.json")
+	if err != nil {
+		fmt.Println("Error creating file:", err)
+		return
+	}
+	defer file.Close()
 
-	_ = ioutil.WriteFile("test.json", file, 0644)
+	// Create a JSON encoder
+	encoder := json.NewEncoder(file)
+
+	// Encode the struct into JSON and write it to the file
+	if err := encoder.Encode(model.Result{
+		Videos: data,
+	}); err != nil {
+		fmt.Println("Error encoding JSON:", err)
+		return
+	}
+
+	fmt.Println("Data has been written to output.json")
 }
 
 // parse dynamic webapp
