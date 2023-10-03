@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"strings"
 
 	"github.com/AbdelilahOu/GoonDoc/model"
@@ -55,11 +57,11 @@ func start(URL string) {
 		data := model.YtVideo{
 			Title:     title,
 			Thumbnail: imageSrc,
-			Channel: model.Channel{
+			ChannelData: model.Channel{
 				Name:  channelName,
 				Image: channelImg,
 			},
-			Details: model.Details{
+			DetailsData: model.Details{
 				Views:       views,
 				ReleaseTime: releaseTime,
 			},
@@ -72,9 +74,9 @@ func start(URL string) {
 }
 
 func saveDataToJson(data []model.YtVideo) {
-	// save data to json file
-	// save data to json file
-	// save data to json file
+	file, _ := json.MarshalIndent(data, "", " ")
+
+	_ = ioutil.WriteFile("test.json", file, 0644)
 }
 
 // parse dynamic webapp
